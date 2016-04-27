@@ -1,22 +1,59 @@
-# Description
-#   Allows users to ask Hubot to post strings containing details of Hearthstone cards based on a card's name.
+# Description:
+#   Allows users to ask Hubot to post strings containing details of Hearthstone
+#   cards based on a card's name.
+#
+# Dependencies:
+#   none
 #
 # Configuration:
-#   LIST_OF_ENV_VARS_TO_SET
+#   HUBOT_MASHAPE_KEY
 #
 # Commands:
-#   hubot hello - <what the respond trigger does>
-#   orly - <what the hear trigger does>
+#   hubot hs card <card name> - Returns one or more cards matching <card name>
 #
 # Notes:
-#   <optional notes required for the script>
+#   Mashape key can be aquired by signing up at
+#   https://market.mashape.com/omgvamp/hearthstone
 #
 # Author:
-#   Derek Miller <7derek3@gmail.com>
+#   7derek3
 
 module.exports = (robot) ->
-  robot.respond /hello/, (res) ->
-    res.reply "hello!"
 
-  robot.hear /orly/, ->
-    res.send "yarly"
+  robot.respond /hs card (.*)/i, (res) ->
+    cardKeyword = res.match[1]
+    robot.http("https://omgvamp-hearthstone-v1.p.mashape.com/cards/searchmkdir hu/#{cardKeyword}?collectible=1")
+      .header('X-Mashape-Key', process.env.HUBOT_MASHAPE_KEY)
+      .get() (err, resp, body) ->
+        data = JSON.parse body
+
+        if resp.statusCode is 404 or data.length is 0
+          return noMatch()
+
+        else if resp.statusCode is 200
+          response = ">>>\n"
+          for card in data
+            if card.type is "Hero" and data.length is 1
+              return noMatch()
+            else if card.type isnt "Hero"
+              response += "*#{card.name}*"
+              if card.cost >= 0
+                response += ", #{card.cost}💎"
+              if card.type is 'Minion'
+                response += "#{card.attack}🗡#{card.health}❤️"
+              if card.type is 'Weapon'
+                response += "#{card.attack}🗡#{card.durability}⚒"
+              if card.text
+                response += ", #{sanitizeStyling(card.text)}"
+              response += "\n"
+          res.send response
+
+        else
+          res.send ">There was an error in the request."
+
+    noMatch = ->
+      res.send ">No matching cards were found."
+
+  sanitizeStyling = (text) ->
+    text.replace(/<.?i>/g, "_").replace(/<.?b>/g, "*").replace(/\n/g, " ")
+        .replace(/\$/g, "")
