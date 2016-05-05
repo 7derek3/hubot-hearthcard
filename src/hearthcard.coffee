@@ -36,7 +36,7 @@ module.exports = (robot) ->
             if card.type is "Hero" and data.length is 1
               return noMatch()
             else if card.type isnt "Hero"
-              response += "*#{card.name}*#{getRarity(card.rarity)}"
+              response += "*#{card.name}* #{getRarity(card.rarity)}"
               if card.cost >= 0
                 response += ", #{card.cost}💎"
               if card.type is 'Minion'
