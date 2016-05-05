@@ -21,6 +21,6 @@ Then add **hubot-hearthcard** to your `external-scripts.json`:
 ## Sample Interaction
 
 ```
-user1>> hubot hello
-hubot>> hello!
+user1>> hubot hs card leeroy
+hubot>> Leeroy Jenkins*​ (L), 5:gem:6:dagger_knife:2:heart:, ​*Charge*​. ​*Battlecry:*​ Summon two 1/1 Whelps for your opponent.
 ```
