@@ -22,7 +22,7 @@ module.exports = (robot) ->
 
   robot.respond /hs card (.*)/i, (res) ->
     cardKeyword = res.match[1]
-    robot.http("https://omgvamp-hearthstone-v1.p.mashape.com/cards/searchmkdir hu/#{cardKeyword}?collectible=1")
+    robot.http("https://omgvamp-hearthstone-v1.p.mashape.com/cards/search/#{cardKeyword}?collectible=1")
       .header('X-Mashape-Key', process.env.HUBOT_MASHAPE_KEY)
       .get() (err, resp, body) ->
         data = JSON.parse body
