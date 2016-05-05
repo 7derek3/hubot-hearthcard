@@ -36,7 +36,7 @@ module.exports = (robot) ->
             if card.type is "Hero" and data.length is 1
               return noMatch()
             else if card.type isnt "Hero"
-              response += "*#{card.name}*"
+              response += "*#{card.name}*#{getRarity(card.rarity)}"
               if card.cost >= 0
                 response += ", #{card.cost}💎"
               if card.type is 'Minion'
@@ -53,6 +53,14 @@ module.exports = (robot) ->
 
     noMatch = ->
       res.send ">No matching cards were found."
+
+  getRarity = (rarity) ->
+    switch rarity
+      when "Free"      then ""
+      when "Common"    then "(C)"
+      when "Rare"      then "(R)"
+      when "Epic"      then "(E)"
+      when "Legendary" then "(L)"
 
   sanitizeStyling = (text) ->
     text.replace(/<.?i>/g, "_").replace(/<.?b>/g, "*").replace(/\n/g, " ")
